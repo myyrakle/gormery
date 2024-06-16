@@ -5,18 +5,18 @@ import (
 	"log"
 	"os"
 
-	"github.com/myyrakle/gormery/pkg"
+	config "github.com/myyrakle/gormery/internal/config"
 	yaml "gopkg.in/yaml.v2"
 )
 
-func LoadConfigFile() pkg.ConfigFile {
+func LoadConfigFile() config.ConfigFile {
 	bytes, err := os.ReadFile(".gormery.yaml")
 
 	if err != nil {
 		fmt.Println("Error: .gormery.yaml file not found.")
 	}
 
-	decoded := &pkg.ConfigFile{}
+	decoded := &config.ConfigFile{}
 	err = yaml.Unmarshal(bytes, decoded)
 	if err != nil {
 		log.Fatalf("Unmarshal: %v", err)

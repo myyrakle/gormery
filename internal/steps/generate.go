@@ -13,8 +13,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/myyrakle/mongery/internal/annotation"
-	"github.com/myyrakle/mongery/pkg/cast"
+	"github.com/myyrakle/gormery/internal/annotation"
+	config "github.com/myyrakle/gormery/internal/config"
+	"github.com/myyrakle/gormery/pkg/cast"
 	"github.com/stoewer/go-strcase"
 )
 
@@ -207,7 +208,7 @@ type ProecssFileContext struct {
 }
 
 // 단일 파일을 읽어서 형식화하는 단위 함수입니다.
-func readFile(configFile ConfigFile, packageName string, filename string, file *ast.File) []ProecssFileContext {
+func readFile(configFile config.ConfigFile, packageName string, filename string, file *ast.File) []ProecssFileContext {
 	contexts := make([]ProecssFileContext, 0)
 
 	for _, declare := range file.Decls {
@@ -257,7 +258,7 @@ func readFile(configFile ConfigFile, packageName string, filename string, file *
 var fileWriteMap map[string]struct{} = make(map[string]struct{})
 
 // 단일 파일을 처리하는 단위 함수입니다.
-func writeFile(configFile ConfigFile, contexts []ProecssFileContext, index int) {
+func writeFile(configFile config.ConfigFile, contexts []ProecssFileContext, index int) {
 	processFileContext := contexts[index]
 
 	bsonConstantList := make([]string, 0)
@@ -342,7 +343,7 @@ func getDirList(basePath string) []string {
 	return dirList
 }
 
-func readFileRecursive(basedir string, configFile ConfigFile) []ProecssFileContext {
+func readFileRecursive(basedir string, configFile config.ConfigFile) []ProecssFileContext {
 	contexts := make([]ProecssFileContext, 0)
 
 	packages := getPackageList(basedir)
@@ -369,7 +370,7 @@ func readFileRecursive(basedir string, configFile ConfigFile) []ProecssFileConte
 	return contexts
 }
 
-func Generate(configFile ConfigFile) {
+func Generate(configFile config.ConfigFile) {
 	fmt.Println(">>> scan files...")
 	processFileContexts := readFileRecursive(configFile.Basedir, configFile)
 	fmt.Println(">>> scan files done")
