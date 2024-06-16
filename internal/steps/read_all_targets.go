@@ -42,6 +42,28 @@ type ProecssFileContext struct {
 
 type ProecssFileContexts []ProecssFileContext
 
+func (c ProecssFileContexts) ContainsFileName(filename string) bool {
+	for _, context := range c {
+		if context.filename == filename {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (c ProecssFileContexts) UniquedFileNames() []string {
+	uniqueFileName := make([]string, 0, len(c))
+
+	for _, context := range c {
+		if !c.ContainsFileName(context.filename) {
+			uniqueFileName = append(uniqueFileName, context.filename)
+		}
+	}
+
+	return uniqueFileName
+}
+
 func getDirList(basePath string) []string {
 	dirs, err := os.ReadDir(basePath)
 	if err != nil {

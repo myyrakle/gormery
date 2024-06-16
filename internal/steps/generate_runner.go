@@ -21,8 +21,9 @@ func GenerateRunner(configFile config.ConfigFile, targets ProecssFileContexts) {
 
 	code += "\t " + `"sync"` + "\n\n"
 	code += "\t " + `"os"` + "\n\n"
+	code += "\t " + `"fmt"` + "\n\n"
 
-	targetImport := "target " + configFile.BaseImport + "/" + configFile.Basedir
+	targetImport := `target "` + configFile.ModuleName + "/" + configFile.Basedir + `"`
 	code += "\t" + targetImport + "\n"
 
 	gormImport := `gormSchema "gorm.io/gorm/schema"`
@@ -55,6 +56,25 @@ func GenerateRunner(configFile config.ConfigFile, targets ProecssFileContexts) {
 	if err != nil {
 		panic(err)
 	}
+
+	// _gorm.go 파일 미리 생성
+	filenames := targets.UniquedFileNames()
+	for _, filename := range filenames {
+		gormFilePath := configFile.Basedir + "/" + filename + configFile.OutputSuffix
+		f, err := os.Create(gormFilePath)
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+
+		code := ""
+		code += "package " + targets[0].packageName + "\n\n"
+
+		_, err = f.WriteString(code)
+		if err != nil {
+			panic(err)
+		}
+	}
 }
 
 func generateCodeForTarget(i int, target ProecssFileContext) string {
@@ -86,21 +106,21 @@ func generateCreateGormFileFunction(configFile config.ConfigFile) string {
 	code += `var basedir = ` + `"` + configFile.Basedir + `"` + "\n"
 	code += `var outputSuffix = ` + `"` + configFile.OutputSuffix + `"` + "\n"
 
-	code += `func createGormFile(schema *gormSchema.Schema, filename string, packageName string, structName string) {`
-	code += "\t" + `gormFilePath := basedir + "/" + filename + outputSuffix` + "\n\n"
+	code += `func createGormFile(schema *gormSchema.Schema, filename string, packageName string, structName string) {` + "\n"
+	code += "\t" + `gormFilePath := basedir + "/" + filename + outputSuffix` + "\n"
 
-	code += "\t" + `code := ""`
+	code += "\t" + `code := ""` + "\n"
 
-	code += "\t" + `code += "func (t " + structName + ") TableName() string {\n"`
-	code += "\t" + `code += "\treturn \"" + schema.Table + "\"\n"`
-	code += "\t" + `code += "}\n\n"`
+	code += "\t" + `code += "func (t " + structName + ") TableName() string {\n"` + "\n"
+	code += "\t" + `code += "\treturn \"" + schema.Table + "\"\n"` + "\n"
+	code += "\t" + `code += "}\n\n"` + "\n"
 
-	code += "\t" + `f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)`
-	code += "\t" + `if err != nil {`
-	code += "\t" + `panic(err)`
+	code += "\t" + `f, err := os.OpenFile(gormFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)` + "\n"
+	code += "\t" + `if err != nil {` + "\n"
+	code += "\t\t" + `panic(err)` + "\n"
 	code += "\t}\n"
 	code += "\tdefer f.Close()\n"
-	code += "\t" + `_, err = fmt.Fprintln(f, code)`
+	code += "\t" + `_, err = fmt.Fprintln(f, code)` + "\n"
 	code += `}`
 
 	return code
