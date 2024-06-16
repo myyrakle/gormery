@@ -59,7 +59,7 @@ func getDirList(basePath string) []string {
 }
 
 // 단일 파일을 읽어서 형식화하는 단위 함수입니다.
-func readFile(configFile config.ConfigFile, packageName string, filename string, file *ast.File) []ProecssFileContext {
+func readFile(_ config.ConfigFile, packageName string, filename string, file *ast.File) []ProecssFileContext {
 	contexts := make([]ProecssFileContext, 0)
 
 	for _, declare := range file.Decls {
@@ -120,7 +120,7 @@ func getPackageList(basePath string) map[string]*ast.Package {
 }
 
 // 필드 정보를 받아서 ProcessFileField로 변환합니다.
-func convertFieldToProcessFileField(structName string, packageName string, field *ast.Field) *ProcessFileField {
+func convertFieldToProcessFileField(_ string, packageName string, field *ast.Field) *ProcessFileField {
 	processFileField := ProcessFileField{}
 
 	if len(field.Names) == 0 {

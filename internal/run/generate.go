@@ -11,10 +11,10 @@ func RunGenerate() {
 	configFile := steps.LoadConfigFile()
 
 	fmt.Println(">>> Running ReadAllTargets")
-	steps.ReadAllTargets(configFile)
+	targets := steps.ReadAllTargets(configFile)
 
 	fmt.Println(">>> Running GenerateRunner")
-	steps.GenerateRunner(configFile)
+	steps.GenerateRunner(configFile, targets)
 
 	fmt.Println(">>> Running RunRunner")
 	steps.RunRunner(configFile)
