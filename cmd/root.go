@@ -3,6 +3,7 @@ package cmd
 import (
 	"os"
 
+	"github.com/myyrakle/gormery/internal/run"
 	"github.com/spf13/cobra"
 )
 
