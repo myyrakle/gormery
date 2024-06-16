@@ -10,7 +10,7 @@ var rootCmd = &cobra.Command{
 	Use:   "gormery",
 	Short: "generate gormery codes",
 	Run: func(cmd *cobra.Command, args []string) {
-		//run.RunGenerate()
+		run.RunGenerate()
 	},
 }
 

@@ -22,6 +22,6 @@ func main() {
 	fmt.Println(schema.Table)
 
 	for _, field := range schema.Fields {
-		fmt.Println(field)
+		fmt.Println(field.DBName)
 	}
 }
