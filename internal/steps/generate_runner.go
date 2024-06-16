@@ -2,4 +2,4 @@ package steps
 
 import config "github.com/myyrakle/gormery/internal/config"
 
-func ReadAllTargets(configFile config.ConfigFile) {}
+func GenerateRunner(configFile config.ConfigFile) {}

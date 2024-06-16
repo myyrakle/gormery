@@ -1,9 +1,21 @@
 package run
 
-import steps "github.com/myyrakle/gormery/internal/steps"
+import (
+	"fmt"
+
+	steps "github.com/myyrakle/gormery/internal/steps"
+)
 
 func RunGenerate() {
+	fmt.Println(">>> Running LoadConfigFile")
 	configFile := steps.LoadConfigFile()
 
-	//pkg.Generate(configFile)
+	fmt.Println(">>> Running ReadAllTargets")
+	steps.ReadAllTargets(configFile)
+
+	fmt.Println(">>> Running GenerateRunner")
+	steps.GenerateRunner(configFile)
+
+	fmt.Println(">>> Running RunRunner")
+	steps.RunRunner(configFile)
 }
