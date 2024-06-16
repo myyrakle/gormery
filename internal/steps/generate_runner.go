@@ -3,6 +3,7 @@ package steps
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	config "github.com/myyrakle/gormery/internal/config"
 )
@@ -19,9 +20,10 @@ func GenerateRunner(configFile config.ConfigFile, targets ProecssFileContexts) {
 
 	code += "import (\n"
 
-	code += "\t " + `"sync"` + "\n\n"
-	code += "\t " + `"os"` + "\n\n"
-	code += "\t " + `"fmt"` + "\n\n"
+	code += "\t " + `"sync"` + "\n"
+	code += "\t " + `"os"` + "\n"
+	code += "\t " + `"fmt"` + "\n"
+	code += "\t " + `"strings"` + "\n\n"
 
 	targetImport := `target "` + configFile.ModuleName + "/" + configFile.Basedir + `"`
 	code += "\t" + targetImport + "\n"
@@ -60,7 +62,7 @@ func GenerateRunner(configFile config.ConfigFile, targets ProecssFileContexts) {
 	// _gorm.go 파일 미리 생성
 	filenames := targets.UniquedFileNames()
 	for _, filename := range filenames {
-		gormFilePath := configFile.Basedir + "/" + filename + configFile.OutputSuffix
+		gormFilePath := strings.Replace(filename, ".go", "", 1) + configFile.OutputSuffix
 		f, err := os.Create(gormFilePath)
 		if err != nil {
 			panic(err)
@@ -81,7 +83,6 @@ func generateCodeForTarget(i int, target ProecssFileContext) string {
 	id := fmt.Sprintf("target_%d", i)
 	targetTypename := target.structName
 	filename := target.filename
-	packageName := target.packageName
 	structName := target.structName
 
 	code := fmt.Sprintf(`
@@ -93,9 +94,9 @@ func generateCodeForTarget(i int, target ProecssFileContext) string {
 	)
 
 	if err == nil {
-		createGormFile(%s, "%s", "%s", "%s")
+		createGormFile(%s, "%s", "%s")
 	}
-`, id, targetTypename, id, filename, packageName, structName)
+`, id, targetTypename, id, filename, structName)
 
 	return code
 }
@@ -106,14 +107,14 @@ func generateCreateGormFileFunction(configFile config.ConfigFile) string {
 	code += `var basedir = ` + `"` + configFile.Basedir + `"` + "\n"
 	code += `var outputSuffix = ` + `"` + configFile.OutputSuffix + `"` + "\n"
 
-	code += `func createGormFile(schema *gormSchema.Schema, filename string, packageName string, structName string) {` + "\n"
-	code += "\t" + `gormFilePath := basedir + "/" + filename + outputSuffix` + "\n"
+	code += `func createGormFile(schema *gormSchema.Schema, filename string, structName string) {` + "\n"
+	code += "\t" + `gormFilePath := strings.Replace(filename, ".go", "", 1) + outputSuffix` + "\n"
 
 	code += "\t" + `code := ""` + "\n"
 
 	code += "\t" + `code += "func (t " + structName + ") TableName() string {\n"` + "\n"
 	code += "\t" + `code += "\treturn \"" + schema.Table + "\"\n"` + "\n"
-	code += "\t" + `code += "}\n\n"` + "\n"
+	code += "\t" + `code += "}\n"` + "\n"
 
 	code += "\t" + `f, err := os.OpenFile(gormFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)` + "\n"
 	code += "\t" + `if err != nil {` + "\n"

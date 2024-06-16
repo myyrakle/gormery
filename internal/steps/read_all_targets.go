@@ -14,6 +14,7 @@ import (
 	"github.com/myyrakle/gormery/internal/annotation"
 	config "github.com/myyrakle/gormery/internal/config"
 	"github.com/myyrakle/gormery/pkg/cast"
+	slice "github.com/myyrakle/gormery/pkg/slice"
 )
 
 func ReadAllTargets(configFile config.ConfigFile) ProecssFileContexts {
@@ -42,21 +43,11 @@ type ProecssFileContext struct {
 
 type ProecssFileContexts []ProecssFileContext
 
-func (c ProecssFileContexts) ContainsFileName(filename string) bool {
-	for _, context := range c {
-		if context.filename == filename {
-			return true
-		}
-	}
-
-	return false
-}
-
 func (c ProecssFileContexts) UniquedFileNames() []string {
-	uniqueFileName := make([]string, 0, len(c))
+	uniqueFileName := make(slice.Strings, 0, len(c))
 
 	for _, context := range c {
-		if !c.ContainsFileName(context.filename) {
+		if !uniqueFileName.Contains(context.filename) {
 			uniqueFileName = append(uniqueFileName, context.filename)
 		}
 	}
