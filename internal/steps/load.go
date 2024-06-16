@@ -1,4 +1,4 @@
-package config
+package steps
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-func Load() pkg.ConfigFile {
+func LoadConfigFile() pkg.ConfigFile {
 	bytes, err := os.ReadFile(".gormery.yaml")
 
 	if err != nil {

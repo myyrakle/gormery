@@ -1,12 +1,9 @@
 package run
 
-import (
-	"github.com/myyrakle/gormery/internal/config"
-	"github.com/myyrakle/gormery/pkg"
-)
+import steps "github.com/myyrakle/gormery/internal/steps"
 
 func RunGenerate() {
-	configFile := config.Load()
+	configFile := steps.LoadConfigFile()
 
-	pkg.Generate(configFile)
+	//pkg.Generate(configFile)
 }
