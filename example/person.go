@@ -1,7 +1,13 @@
 package models
 
-// @Entity
+// @Gorm
 type Person struct {
-	ID   string `bson:"_id,omitempty"`
-	Name string `bson:"name"` // 이름
+	ID   string
+	Name string
+}
+
+// @Gorm
+type PersonSoMany struct {
+	ID   string
+	Name string
 }
