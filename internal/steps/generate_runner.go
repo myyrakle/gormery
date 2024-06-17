@@ -116,6 +116,10 @@ func generateCreateGormFileFunction(configFile config.ConfigFile) string {
 	code += "\t" + `code += "\treturn \"" + schema.Table + "\"\n"` + "\n"
 	code += "\t" + `code += "}\n"` + "\n"
 
+	code += "\t" + `code += "func (t " + structName + ") StructName() string {\n"` + "\n"
+	code += "\t" + `code += "\treturn \"" + structName + "\"\n"` + "\n"
+	code += "\t" + `code += "}\n"` + "\n"
+
 	code += "\t" + `f, err := os.OpenFile(gormFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)` + "\n"
 	code += "\t" + `if err != nil {` + "\n"
 	code += "\t\t" + `panic(err)` + "\n"
