@@ -66,9 +66,13 @@ func createGormFile(schema *gormSchema.Schema, filename string, structName strin
 	for _, field := range schema.Fields {
 		columnConstantName := structName + "_" + field.Name
 		columnConstantExpression := "const " + columnConstantName + " = " + "\"" + field.DBName + "\"" + "\n"
-		columnConstantNames = append(columnConstantNames, columnConstantName)
+		columnConstantNames = append(columnConstantNames, "\t\t"+columnConstantName+",")
 		code += columnConstantExpression
 	}
+
+	code += "func (t " + structName + ") Columns() []string {\n"
+	code += "\treturn []string{\n" + strings.Join(columnConstantNames, "\n") + "\n\t}\n"
+	code += "}\n"
 
 	f, err := os.OpenFile(gormFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {

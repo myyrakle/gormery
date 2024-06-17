@@ -128,11 +128,14 @@ func generateCreateGormFileFunction(configFile config.ConfigFile) string {
 	code += "\t" + `for _, field := range schema.Fields {` + "\n"
 	code += "\t\t" + `columnConstantName := structName + "_" + field.Name` + "\n"
 	code += "\t\t" + `columnConstantExpression := "const " + columnConstantName + " = " + "\"" + field.DBName + "\"" + "\n"` + "\n"
-	code += "\t\t" + `columnConstantNames = append(columnConstantNames, columnConstantName)` + "\n"
+	code += "\t\t" + `columnConstantNames = append(columnConstantNames, "\t\t"+columnConstantName+",")` + "\n"
 	code += "\t\t" + "code += columnConstantExpression" + "\n"
 	code += "\t" + `}` + "\n\n"
 
 	// Columns 메서드 구현
+	code += "\t" + `code += "func (t " + structName + ") Columns() []string {\n"` + "\n"
+	code += "\t" + `code += "\treturn []string{\n" + strings.Join(columnConstantNames, "\n") + "\n\t}\n"` + "\n"
+	code += "\t" + `code += "}\n"` + "\n\n"
 
 	code += "\t" + `f, err := os.OpenFile(gormFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)` + "\n"
 	code += "\t" + `if err != nil {` + "\n"
