@@ -114,11 +114,16 @@ func generateCreateGormFileFunction(configFile config.ConfigFile) string {
 
 	code += "\t" + `code += "func (t " + structName + ") TableName() string {\n"` + "\n"
 	code += "\t" + `code += "\treturn \"" + schema.Table + "\"\n"` + "\n"
-	code += "\t" + `code += "}\n"` + "\n"
+	code += "\t" + `code += "}\n"` + "\n\n"
 
 	code += "\t" + `code += "func (t " + structName + ") StructName() string {\n"` + "\n"
 	code += "\t" + `code += "\treturn \"" + structName + "\"\n"` + "\n"
-	code += "\t" + `code += "}\n"` + "\n"
+	code += "\t" + `code += "}\n"` + "\n\n"
+
+	// column 상수 목록 생성 (const ColumnName = "column_name")
+	code += "\t" + `for _, field := range schema.Fields {` + "\n"
+	code += "\t\t" + `code += "const " + structName + "_" + field.Name + " = " + "\"" + field.DBName + "\"" + "\n"` + "\n"
+	code += "\t" + `}` + "\n\n"
 
 	code += "\t" + `f, err := os.OpenFile(gormFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)` + "\n"
 	code += "\t" + `if err != nil {` + "\n"

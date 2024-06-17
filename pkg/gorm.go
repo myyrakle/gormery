@@ -15,5 +15,11 @@ func GetGormSchemaFromValue() (*gormSchema.Schema, error) {
 		"",
 	)
 
+	for _, field := range schema.Fields {
+		if field.DBName == "id" {
+			field.TagSettings["AUTO_INCREMENT"] = "true"
+		}
+	}
+
 	return schema, err
 }
