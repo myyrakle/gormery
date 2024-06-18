@@ -13,30 +13,6 @@ import (
 func main() {
 
 	target_0, err := gormSchema.ParseWithSpecialTableName(
-		&target.Person{},
-		&sync.Map{},
-		&gormSchema.NamingStrategy{},
-		"",
-	)
-
-	if err == nil {
-		createGormFile(target_0, "example/person.go", "Person")
-	}
-
-
-	target_1, err := gormSchema.ParseWithSpecialTableName(
-		&target.PersonSoMany{},
-		&sync.Map{},
-		&gormSchema.NamingStrategy{},
-		"",
-	)
-
-	if err == nil {
-		createGormFile(target_1, "example/person.go", "PersonSoMany")
-	}
-
-
-	target_2, err := gormSchema.ParseWithSpecialTableName(
 		&target.Order{},
 		&sync.Map{},
 		&gormSchema.NamingStrategy{},
@@ -44,7 +20,31 @@ func main() {
 	)
 
 	if err == nil {
-		createGormFile(target_2, "example/order.go", "Order")
+		createGormFile(target_0, "example/order.go", "Order")
+	}
+
+
+	target_1, err := gormSchema.ParseWithSpecialTableName(
+		&target.Person{},
+		&sync.Map{},
+		&gormSchema.NamingStrategy{},
+		"",
+	)
+
+	if err == nil {
+		createGormFile(target_1, "example/person.go", "Person")
+	}
+
+
+	target_2, err := gormSchema.ParseWithSpecialTableName(
+		&target.PersonSoMany{},
+		&sync.Map{},
+		&gormSchema.NamingStrategy{},
+		"",
+	)
+
+	if err == nil {
+		createGormFile(target_2, "example/person.go", "PersonSoMany")
 	}
 
 }
@@ -81,6 +81,12 @@ func createGormFile(schema *gormSchema.Schema, filename string, structName strin
 	code += "}\n\n"
 	code += "func (t " + sliceTypeName + ") IsEmpty() bool {\n"
 	code += "\treturn len(t) == 0\n"
+	code += "}\n\n"
+	code += "func (t " + sliceTypeName + ") First() " + structName + " {\n"
+	code += "\tif t.IsEmpty() {\n"
+	code += "\t\treturn " + structName + "{}\n"
+	code += "\t}\n"
+	code += "\treturn t[0]\n"
 	code += "}\n\n"
 	f, err := os.OpenFile(gormFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {

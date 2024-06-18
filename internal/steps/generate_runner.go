@@ -155,6 +155,14 @@ func generateCreateGormFileFunction(configFile config.ConfigFile) string {
 		code += "\t" + `code += "func (t " + sliceTypeName + ") IsEmpty() bool {\n"` + "\n"
 		code += "\t" + `code += "\treturn len(t) == 0\n"` + "\n"
 		code += "\t" + `code += "}\n\n"` + "\n"
+
+		// First 메서드 추가
+		code += "\t" + `code += "func (t " + sliceTypeName + ") First() " + structName + " {\n"` + "\n"
+		code += "\t" + `code += "\tif t.IsEmpty() {\n"` + "\n"
+		code += "\t" + `code += "\t\treturn " + structName + "{}\n"` + "\n"
+		code += "\t" + `code += "\t}\n"` + "\n"
+		code += "\t" + `code += "\treturn t[0]\n"` + "\n"
+		code += "\t" + `code += "}\n\n"` + "\n"
 	}
 
 	code += "\t" + `f, err := os.OpenFile(gormFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)` + "\n"
