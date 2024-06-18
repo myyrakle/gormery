@@ -1,10 +1,10 @@
 package main
 
 import (
-	 "sync"
-	 "os"
-	 "fmt"
-	 "strings"
+	"fmt"
+	"os"
+	"strings"
+	"sync"
 
 	target "github.com/myyrakle/gormery/example"
 	gormSchema "gorm.io/gorm/schema"
@@ -23,7 +23,6 @@ func main() {
 		createGormFile(target_0, "example/order.go", "Order")
 	}
 
-
 	target_1, err := gormSchema.ParseWithSpecialTableName(
 		&target.Person{},
 		&sync.Map{},
@@ -34,7 +33,6 @@ func main() {
 	if err == nil {
 		createGormFile(target_1, "example/person.go", "Person")
 	}
-
 
 	target_2, err := gormSchema.ParseWithSpecialTableName(
 		&target.PersonSoMany{},
@@ -51,6 +49,7 @@ func main() {
 
 var basedir = "example"
 var outputSuffix = "_gorm.go"
+
 func createGormFile(schema *gormSchema.Schema, filename string, structName string) {
 	gormFilePath := strings.Replace(filename, ".go", "", 1) + outputSuffix
 	code := ""
@@ -74,6 +73,7 @@ func createGormFile(schema *gormSchema.Schema, filename string, structName strin
 	code += "\treturn []string{\n" + strings.Join(columnConstantNames, "\n") + "\n\t}\n"
 	code += "}\n"
 
+	code += "type " + gormSchema.NamingStrategy{NoLowerCase: true}.TableName(structName) + " []" + structName + "\n"
 	f, err := os.OpenFile(gormFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		panic(err)

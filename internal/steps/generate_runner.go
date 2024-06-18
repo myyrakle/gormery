@@ -138,6 +138,12 @@ func generateCreateGormFileFunction(configFile config.ConfigFile) string {
 	code += "\t" + `code += "\treturn []string{\n" + strings.Join(columnConstantNames, "\n") + "\n\t}\n"` + "\n"
 	code += "\t" + `code += "}\n"` + "\n\n"
 
+	// Slice 타입 구현
+	if configFile.Features.Contains(config.FeatureSlice) {
+		// named type 추가
+		code += "\t" + `code += "type " + gormSchema.NamingStrategy{ NoLowerCase: true }.TableName(structName) + " []" + structName + "\n"` + "\n"
+	}
+
 	code += "\t" + `f, err := os.OpenFile(gormFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)` + "\n"
 	code += "\t" + `if err != nil {` + "\n"
 	code += "\t\t" + `panic(err)` + "\n"
