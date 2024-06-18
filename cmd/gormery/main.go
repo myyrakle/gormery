@@ -56,11 +56,11 @@ func createGormFile(schema *gormSchema.Schema, filename string, structName strin
 	code := ""
 	code += "func (t " + structName + ") TableName() string {\n"
 	code += "\treturn \"" + schema.Table + "\"\n"
-	code += "}\n"
+	code += "}\n\n"
 
 	code += "func (t " + structName + ") StructName() string {\n"
 	code += "\treturn \"" + structName + "\"\n"
-	code += "}\n"
+	code += "}\n\n"
 
 	columnConstantNames := []string{}
 	for _, field := range schema.Fields {
@@ -70,10 +70,24 @@ func createGormFile(schema *gormSchema.Schema, filename string, structName strin
 		code += columnConstantExpression
 	}
 
-	code += "func (t " + structName + ") Columns() []string {\n"
+	code += "\nfunc (t " + structName + ") Columns() []string {\n"
 	code += "\treturn []string{\n" + strings.Join(columnConstantNames, "\n") + "\n\t}\n"
-	code += "}\n"
+	code += "}\n\n"
 
+	sliceTypeName := gormSchema.NamingStrategy{ NoLowerCase: true }.TableName(structName)
+	code += "type " + sliceTypeName + " []" + structName + "\n\n"
+	code += "func (t " + sliceTypeName + ") Len() int {\n"
+	code += "\treturn len(t)\n"
+	code += "}\n\n"
+	code += "func (t " + sliceTypeName + ") IsEmpty() bool {\n"
+	code += "\treturn len(t) == 0\n"
+	code += "}\n\n"
+	code += "func (t " + sliceTypeName + ") First() " + structName + " {\n"
+	code += "\tif t.IsEmpty() {\n"
+	code += "\t\treturn " + structName + "{}\n"
+	code += "\t}\n"
+	code += "\treturn t[0]\n"
+	code += "}\n\n"
 	f, err := os.OpenFile(gormFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		panic(err)
