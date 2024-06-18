@@ -1,6 +1,6 @@
 # gormery
 
-![](https://img.shields.io/badge/language-Go-00ADD8) ![](https://img.shields.io/badge/version-0.1.0-brightgreen) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+![](https://img.shields.io/badge/language-Go-00ADD8) ![](https://img.shields.io/badge/version-0.2.0-brightgreen) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 [document](https://pkg.go.dev/github.com/myyrakle/gormery)
 
@@ -22,6 +22,8 @@ Here is an example of a config file.
 basedir: example
 output-suffix: "_gorm.go"
 runner-path: "cmd/gormery"
+features:
+  - SLICE
 ```
 
 It means that all files in the example directory will be read, and the output file will be created with the name "\*\_gorm.go".
@@ -62,5 +64,34 @@ func (t Person) Columns() []string {
 		Person_ID,
 		Person_Name,
 	}
+}
+```
+
+## Features - Slice 
+
+```yaml
+features:
+  - SLICE
+```
+If you enable Slice among the features flags, it creates a basic boilerplate for Slice.
+
+
+It is as follows:
+```go
+type PersonSoManies []PersonSoMany
+
+func (t PersonSoManies) Len() int {
+	return len(t)
+}
+
+func (t PersonSoManies) IsEmpty() bool {
+	return len(t) == 0
+}
+
+func (t PersonSoManies) First() PersonSoMany {
+	if t.IsEmpty() {
+		return PersonSoMany{}
+	}
+	return t[0]
 }
 ```
