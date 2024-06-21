@@ -9,7 +9,7 @@ Boilerplate generator for gorm
 ## install
 
 ```
-go install github.com/myyrakle/gormery@v0.1.0
+go install github.com/myyrakle/gormery@v0.2.0
 ```
 
 ## Confiuration
