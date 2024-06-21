@@ -1,6 +1,6 @@
 module github.com/myyrakle/gormery
 
-go 1.20.0
+go 1.20
 
 require (
 	github.com/spf13/cobra v1.8.0
