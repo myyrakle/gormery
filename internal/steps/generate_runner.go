@@ -91,6 +91,11 @@ func generateCodeForTarget(i int, target ProecssFileContext) string {
 	targetTypename := target.structName
 	filename := target.filename
 	structName := target.structName
+	tableName := ""
+
+	if target.entityParam != nil && len(*target.entityParam) > 0 {
+		tableName = *target.entityParam
+	}
 
 	code := fmt.Sprintf(`
 	%s, err := gormSchema.ParseWithSpecialTableName(
@@ -101,9 +106,9 @@ func generateCodeForTarget(i int, target ProecssFileContext) string {
 	)
 
 	if err == nil {
-		createGormFile(%s, "%s", "%s")
+		createGormFile(%s, "%s", "%s", "%s")
 	}
-`, id, targetTypename, id, filename, structName)
+`, id, targetTypename, id, filename, structName, tableName)
 
 	return code
 }
@@ -114,14 +119,18 @@ func generateCreateGormFileFunction(configFile config.ConfigFile) string {
 	code += `var basedir = ` + `"` + configFile.Basedir + `"` + "\n"
 	code += `var outputSuffix = ` + `"` + configFile.OutputSuffix + `"` + "\n"
 
-	code += `func createGormFile(schema *gormSchema.Schema, filename string, structName string) {` + "\n"
+	code += `func createGormFile(schema *gormSchema.Schema, filename string, structName string, tableName string) {` + "\n"
 	code += "\t" + `gormFilePath := strings.Replace(filename, ".go", "", 1) + outputSuffix` + "\n"
 
 	code += "\t" + `code := ""` + "\n"
 
 	// TableName 메서드 구현
 	code += "\t" + `code += "func (t " + structName + ") TableName() string {\n"` + "\n"
+	code += "\t" + `if tableName != "" {` + "\n"
+	code += "\t" + `code += "\treturn \""+ tableName + "\"\n"` + "\n"
+	code += "\t" + `} else {` + "\n"
 	code += "\t" + `code += "\treturn \"" + schema.Table + "\"\n"` + "\n"
+	code += "\t" + `}` + "\n"
 	code += "\t" + `code += "}\n\n"` + "\n\n"
 
 	// StructName 메서드 구현

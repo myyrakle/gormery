@@ -1,6 +1,6 @@
 package models
 
-// @Gorm
+// @Gorm("order__")
 type Order struct {
 	ID                  string `bson:"_id,omitempty"`
 	BuyerName           string `bson:"buyerName"`           // 구매자명
