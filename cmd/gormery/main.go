@@ -47,7 +47,7 @@ func main() {
 	)
 
 	if err == nil {
-		createGormFile(target_0, "example/person.go", "Person")
+		createGormFile(target_0, "example/person.go", "Person", "")
 	}
 
 
@@ -59,7 +59,7 @@ func main() {
 	)
 
 	if err == nil {
-		createGormFile(target_1, "example/person.go", "PersonSoMany")
+		createGormFile(target_1, "example/person.go", "PersonSoMany", "")
 	}
 
 
@@ -71,18 +71,22 @@ func main() {
 	)
 
 	if err == nil {
-		createGormFile(target_2, "example/order.go", "Order")
+		createGormFile(target_2, "example/order.go", "Order", "order__")
 	}
 
 }
 
 var basedir = "example"
 var outputSuffix = "_gorm.go"
-func createGormFile(schema *gormSchema.Schema, filename string, structName string) {
+func createGormFile(schema *gormSchema.Schema, filename string, structName string, tableName string) {
 	gormFilePath := strings.Replace(filename, ".go", "", 1) + outputSuffix
 	code := ""
 	code += "func (t " + structName + ") TableName() string {\n"
+	if tableName != "" {
+	code += "\treturn \""+ tableName + "\"\n"
+	} else {
 	code += "\treturn \"" + schema.Table + "\"\n"
+	}
 	code += "}\n\n"
 
 	code += "func (t " + structName + ") StructName() string {\n"
