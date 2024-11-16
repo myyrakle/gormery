@@ -158,6 +158,11 @@ func generateCreateGormFileFunction(configFile config.ConfigFile) string {
 		// named type 명명
 		code += "\t" + `sliceTypeName := gormSchema.NamingStrategy{ NoLowerCase: true }.TableName(structName)` + "\n"
 
+		// slice type명과 struct type명이 같다면 slice type명에 접미사로 'List'를 붙임
+		code += "\t" + `if sliceTypeName == structName {` + "\n"
+		code += "\t\t" + `sliceTypeName += "List"` + "\n"
+		code += "\t" + `}` + "\n"
+
 		// named type 추가
 		code += "\t" + `code += "type " + sliceTypeName + " []" + structName + "\n\n"` + "\n"
 
