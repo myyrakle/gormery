@@ -1,6 +1,6 @@
 # gormery
 
-![](https://img.shields.io/badge/language-Go-00ADD8) ![](https://img.shields.io/badge/version-0.4.0-brightgreen) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+![](https://img.shields.io/badge/language-Go-00ADD8) ![](https://img.shields.io/badge/version-0.4.1-brightgreen) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 [document](https://pkg.go.dev/github.com/myyrakle/gormery)
 
@@ -9,7 +9,7 @@ Boilerplate generator for gorm
 ## install
 
 ```
-go install github.com/myyrakle/gormery@v0.4.0
+go install github.com/myyrakle/gormery@v0.4.1
 ```
 
 ## Confiuration
@@ -67,16 +67,17 @@ func (t Person) Columns() []string {
 }
 ```
 
-## Features - Slice 
+## Features - Slice
 
 ```yaml
 features:
   - SLICE
 ```
+
 If you enable Slice among the features flags, it creates a basic boilerplate for Slice.
 
-
 It is as follows:
+
 ```go
 type PersonSoManies []PersonSoMany
 
