@@ -12,7 +12,7 @@ import (
 
 func main() {
 	code := ""
-	gormFilePath0 := "example/order_gorm.go"
+	gormFilePath0 := "example/clothes_gorm.go"
 	f0, err := os.Create(gormFilePath0)
 	if err != nil {
 		panic(err)
@@ -25,7 +25,7 @@ func main() {
 		panic(err)
 	}
 	f0.Close()
-	gormFilePath1 := "example/person_gorm.go"
+	gormFilePath1 := "example/order_gorm.go"
 	f1, err := os.Create(gormFilePath1)
 	if err != nil {
 		panic(err)
@@ -38,7 +38,7 @@ func main() {
 		panic(err)
 	}
 	f1.Close()
-	gormFilePath2 := "example/clothes_gorm.go"
+	gormFilePath2 := "example/person_gorm.go"
 	f2, err := os.Create(gormFilePath2)
 	if err != nil {
 		panic(err)
@@ -53,42 +53,6 @@ func main() {
 	f2.Close()
 
 	target_0, err := gormSchema.ParseWithSpecialTableName(
-		&target.Order{},
-		&sync.Map{},
-		&gormSchema.NamingStrategy{},
-		"",
-	)
-
-	if err == nil {
-		createGormFile(target_0, "example/order.go", "Order", "order__")
-	}
-
-
-	target_1, err := gormSchema.ParseWithSpecialTableName(
-		&target.Person{},
-		&sync.Map{},
-		&gormSchema.NamingStrategy{},
-		"",
-	)
-
-	if err == nil {
-		createGormFile(target_1, "example/person.go", "Person", "")
-	}
-
-
-	target_2, err := gormSchema.ParseWithSpecialTableName(
-		&target.PersonSoMany{},
-		&sync.Map{},
-		&gormSchema.NamingStrategy{},
-		"",
-	)
-
-	if err == nil {
-		createGormFile(target_2, "example/person.go", "PersonSoMany", "")
-	}
-
-
-	target_3, err := gormSchema.ParseWithSpecialTableName(
 		&target.PackingClothes{},
 		&sync.Map{},
 		&gormSchema.NamingStrategy{},
@@ -96,7 +60,55 @@ func main() {
 	)
 
 	if err == nil {
-		createGormFile(target_3, "example/clothes.go", "PackingClothes", "")
+		createGormFile(target_0, "example/clothes.go", "PackingClothes", "")
+	}
+
+
+	target_1, err := gormSchema.ParseWithSpecialTableName(
+		&target.Clothes{},
+		&sync.Map{},
+		&gormSchema.NamingStrategy{},
+		"",
+	)
+
+	if err == nil {
+		createGormFile(target_1, "example/clothes.go", "Clothes", "")
+	}
+
+
+	target_2, err := gormSchema.ParseWithSpecialTableName(
+		&target.Order{},
+		&sync.Map{},
+		&gormSchema.NamingStrategy{},
+		"",
+	)
+
+	if err == nil {
+		createGormFile(target_2, "example/order.go", "Order", "order__")
+	}
+
+
+	target_3, err := gormSchema.ParseWithSpecialTableName(
+		&target.Person{},
+		&sync.Map{},
+		&gormSchema.NamingStrategy{},
+		"",
+	)
+
+	if err == nil {
+		createGormFile(target_3, "example/person.go", "Person", "")
+	}
+
+
+	target_4, err := gormSchema.ParseWithSpecialTableName(
+		&target.PersonSoMany{},
+		&sync.Map{},
+		&gormSchema.NamingStrategy{},
+		"",
+	)
+
+	if err == nil {
+		createGormFile(target_4, "example/person.go", "PersonSoMany", "")
 	}
 
 }
@@ -120,6 +132,10 @@ func createGormFile(schema *gormSchema.Schema, filename string, structName strin
 
 	columnConstantNames := []string{}
 	for _, field := range schema.Fields {
+		// field.DBName이 빈 문자열인 경우 상수를 생성하지 않음
+		if field.DBName == "" {
+			continue
+		}
 		columnConstantName := structName + "_" + field.Name
 		columnConstantExpression := "const " + columnConstantName + " = " + "\"" + field.DBName + "\"" + "\n"
 		columnConstantNames = append(columnConstantNames, "\t\t"+columnConstantName+",")
