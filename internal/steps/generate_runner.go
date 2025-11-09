@@ -142,6 +142,10 @@ func generateCreateGormFileFunction(configFile config.ConfigFile) string {
 
 	code += "\t" + `columnConstantNames := []string{}` + "\n"
 	code += "\t" + `for _, field := range schema.Fields {` + "\n"
+	code += "\t\t" + `// field.DBName이 빈 문자열인 경우 상수를 생성하지 않음` + "\n"
+	code += "\t\t" + `if field.DBName == "" {` + "\n"
+	code += "\t\t\t" + `continue` + "\n"
+	code += "\t\t" + `}` + "\n"
 	code += "\t\t" + `columnConstantName := structName + "_" + field.Name` + "\n"
 	code += "\t\t" + `columnConstantExpression := "const " + columnConstantName + " = " + "\"" + field.DBName + "\"" + "\n"` + "\n"
 	code += "\t\t" + `columnConstantNames = append(columnConstantNames, "\t\t"+columnConstantName+",")` + "\n"
