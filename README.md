@@ -9,7 +9,7 @@ Boilerplate generator for gorm
 ## install
 
 ```
-go install github.com/myyrakle/gormery@v0.4.1
+go install github.com/myyrakle/gormery@v0.4.2
 ```
 
 ## Confiuration
@@ -95,4 +95,32 @@ func (t PersonSoManies) First() PersonSoMany {
 	}
 	return t[0]
 }
+```
+
+## Features - FieldName
+
+```yaml
+features:
+  - FIELD_NAME
+```
+
+If you enable FieldName among the features flags, it creates a method to get the fully qualified column name.
+
+IT is as follows:
+
+```go
+type PersonSoMany struct {
+    ID   string
+    Name string
+}
+
+func (t PersonSoMany) FieldName(column string) string {
+    return t.TableName() + "." + column
+}
+```
+
+```go
+// Usage
+person := PersonSoMany{}
+fullColumnName := person.FieldName(PersonSoMany_Name) // "people.name"
 ```

@@ -14,7 +14,8 @@ func (f Features) Contains(feature Feature) bool {
 }
 
 const (
-	FeatureSlice Feature = "SLICE"
+	FeatureSlice     Feature = "SLICE"
+	FeatureFieldName Feature = "FIELD_NAME"
 )
 
 type ConfigFile struct {
