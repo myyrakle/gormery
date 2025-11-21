@@ -189,6 +189,13 @@ func generateCreateGormFileFunction(configFile config.ConfigFile) string {
 		code += "\t" + `code += "}\n\n"` + "\n"
 	}
 
+	// {table_name}.{column_name} 조합 기능 추가
+	if configFile.Features.Contains(config.FeatureFieldName) {
+		code += "\t" + `code += "func (t " + structName + ") FieldName(column string) string {\n"` + "\n"
+		code += "\t" + `code += "\treturn structName.TableName() + \".\" + column\n"` + "\n"
+		code += "\t" + `code += "}\n\n"` + "\n"
+	}
+
 	code += "\t" + `f, err := os.OpenFile(gormFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)` + "\n"
 	code += "\t" + `if err != nil {` + "\n"
 	code += "\t\t" + `panic(err)` + "\n"

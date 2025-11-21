@@ -3,3 +3,4 @@ output-suffix: "_gorm.go"
 runner-path: "cmd/gormery"
 features:
   - SLICE
+  - FIELD_NAME
