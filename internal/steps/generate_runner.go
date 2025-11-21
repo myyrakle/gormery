@@ -192,7 +192,7 @@ func generateCreateGormFileFunction(configFile config.ConfigFile) string {
 	// {table_name}.{column_name} 조합 기능 추가
 	if configFile.Features.Contains(config.FeatureFieldName) {
 		code += "\t" + `code += "func (t " + structName + ") FieldName(column string) string {\n"` + "\n"
-		code += "\t" + `code += "\treturn structName.TableName() + \".\" + column\n"` + "\n"
+		code += "\t" + `code += "\treturn t.TableName() + \".\" + column\n"` + "\n"
 		code += "\t" + `code += "}\n\n"` + "\n"
 	}
 
