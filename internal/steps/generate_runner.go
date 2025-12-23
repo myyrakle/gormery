@@ -105,10 +105,11 @@ func generateCodeForTarget(i int, target ProecssFileContext) string {
 		"",
 	)
 
-	if err == nil {
-		createGormFile(%s, "%s", "%s", "%s")
+	if err != nil {
+		panic(fmt.Sprintf("failed to parse struct %s: %%v", err))
 	}
-`, id, targetTypename, id, filename, structName, tableName)
+	createGormFile(%s, "%s", "%s", "%s")
+`, id, targetTypename, structName, id, filename, structName, tableName)
 
 	return code
 }
