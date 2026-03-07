@@ -209,6 +209,11 @@ func readFileRecursive(basedir string, configFile config.ConfigFile) []ProecssFi
 
 	for packageName, asts := range packages {
 		for filename, file := range asts.Files {
+			// Windows 운영체제인 경우 경로 구분자가 역슬래시(\) 이므로 replace
+			if strings.Contains(filename, "\\") {
+				filename = strings.Replace(filename, "\\", "/", -1)
+			}
+
 			if strings.HasSuffix(filename, "_test.go") {
 				continue
 			}

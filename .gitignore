@@ -22,3 +22,7 @@ go.work
 go.work.sum
 
 *_gorm.go
+
+# IDE files
+.idea/
+.vscode/
