@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	config "github.com/myyrakle/gormery/internal/config"
+	"github.com/myyrakle/gormery/internal/naming"
+	gormSchema "gorm.io/gorm/schema"
 )
 
 func GenerateRunner(configFile config.ConfigFile, targets ProecssFileContexts) {
@@ -97,6 +99,14 @@ func generateCodeForTarget(i int, target ProecssFileContext) string {
 		tableName = *target.entityParam
 	}
 
+	// slice 타입명은 structName만의 순수 함수라 generate-time에 확정한다.
+	// gorm 복수화가 대문자 약어 끝에 대문자 S를 붙이는 문제(URL -> URLS)를
+	// FixInitialismPlural로 교정한 뒤 러너엔 최종 문자열만 리터럴로 넘긴다.
+	sliceTypeName := naming.FixInitialismPlural(gormSchema.NamingStrategy{NoLowerCase: true}.TableName(structName))
+	if sliceTypeName == structName {
+		sliceTypeName += "List"
+	}
+
 	code := fmt.Sprintf(`
 	%s, err := gormSchema.ParseWithSpecialTableName(
 		&target.%s{},
@@ -106,9 +116,9 @@ func generateCodeForTarget(i int, target ProecssFileContext) string {
 	)
 
 	if err == nil {
-		createGormFile(%s, "%s", "%s", "%s")
+		createGormFile(%s, "%s", "%s", "%s", "%s")
 	}
-`, id, targetTypename, id, filename, structName, tableName)
+`, id, targetTypename, id, filename, structName, tableName, sliceTypeName)
 
 	return code
 }
@@ -119,7 +129,7 @@ func generateCreateGormFileFunction(configFile config.ConfigFile) string {
 	code += `var basedir = ` + `"` + configFile.Basedir + `"` + "\n"
 	code += `var outputSuffix = ` + `"` + configFile.OutputSuffix + `"` + "\n"
 
-	code += `func createGormFile(schema *gormSchema.Schema, filename string, structName string, tableName string) {` + "\n"
+	code += `func createGormFile(schema *gormSchema.Schema, filename string, structName string, tableName string, sliceTypeName string) {` + "\n"
 	code += "\t" + `gormFilePath := strings.Replace(filename, ".go", "", 1) + outputSuffix` + "\n"
 
 	code += "\t" + `code := ""` + "\n"
@@ -159,13 +169,8 @@ func generateCreateGormFileFunction(configFile config.ConfigFile) string {
 
 	// Slice 타입 구현
 	if configFile.Features.Contains(config.FeatureSlice) {
-		// named type 명명
-		code += "\t" + `sliceTypeName := gormSchema.NamingStrategy{ NoLowerCase: true }.TableName(structName)` + "\n"
-
-		// slice type명과 struct type명이 같다면 slice type명에 접미사로 'List'를 붙임
-		code += "\t" + `if sliceTypeName == structName {` + "\n"
-		code += "\t\t" + `sliceTypeName += "List"` + "\n"
-		code += "\t" + `}` + "\n"
+		// sliceTypeName은 generate-time에 확정되어 파라미터로 전달된다
+		// (naming.FixInitialismPlural 적용 완료).
 
 		// named type 추가
 		code += "\t" + `code += "type " + sliceTypeName + " []" + structName + "\n\n"` + "\n"
