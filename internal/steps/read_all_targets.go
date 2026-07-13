@@ -17,10 +17,44 @@ import (
 	slice "github.com/myyrakle/gormery/pkg/slice"
 )
 
-func ReadAllTargets(configFile config.ConfigFile) ProecssFileContexts {
+func ReadAllTargets(configFile config.ConfigFile, selected []string) ProecssFileContexts {
 	contexts := readFileRecursive(configFile.Basedir, configFile)
 
+	if len(selected) > 0 {
+		contexts = filterBySelectedFiles(contexts, selected)
+	}
+
 	return contexts
+}
+
+// filterBySelectedFiles keeps only the contexts whose source file matches one of
+// the selected paths. Matching is forgiving: both a cleaned full-path match and a
+// base-name match count, so "example/clothes.go", "./example/clothes.go" and
+// "clothes.go" all select example/clothes.go. Paths are normalized to forward
+// slashes to stay consistent with the Windows handling in readFileRecursive.
+func filterBySelectedFiles(contexts ProecssFileContexts, selected []string) ProecssFileContexts {
+	wanted := make(map[string]bool, len(selected))
+	wantedBase := make(map[string]bool, len(selected))
+	for _, s := range selected {
+		s = strings.ReplaceAll(s, "\\", "/")
+		clean := path.Clean(s)
+		wanted[clean] = true
+		wantedBase[path.Base(clean)] = true
+	}
+
+	filtered := make(ProecssFileContexts, 0, len(contexts))
+	for _, context := range contexts {
+		clean := path.Clean(context.filename)
+		if wanted[clean] || wantedBase[path.Base(clean)] {
+			filtered = append(filtered, context)
+		}
+	}
+
+	if len(filtered) == 0 {
+		log.Printf("gormery: no @Gorm targets matched the selected files: %v", selected)
+	}
+
+	return filtered
 }
 
 type ProcessFileField struct {

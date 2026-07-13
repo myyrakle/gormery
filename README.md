@@ -38,6 +38,13 @@ gormery
 
 gormery only generates structures with `// @Gorm` comments. t reads structures and fields and produces a list of methods and constants.
 
+By default, every file under `basedir` is processed. To generate only for specific files, pass them as arguments:
+
+```
+gormery                            # process everything under basedir
+gormery example/clothes.go a.go    # process only the given files
+```
+
 If you have a struct like
 
 ```
